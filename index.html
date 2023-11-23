@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+      body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:hover {background-color: #f5f5f5;}
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 20px 0;
+            border: none;
+            cursor: pointer;
+            width: auto;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        input[type=number] {
+            width: 50%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<table id="frequencyTable">
+    <tr>
+        <th>Значение</th>
+        <th>Количество</th>
+        <th>Частость</th>
+        <th>Накопленная частота</th>
+    </tr>
+</table>
+
+<input type="number" id="valueInput" placeholder=" Введите Значение">
+<input type="number" id="frequencyInput" placeholder="Введите Количество">
+<button onclick="addData()">Add Data</button>
+
+<script>
+function calculateCumulativeFrequency(variationSeries) {
+    let cumulativeFrequency = 0;
+    let cumulativeArray = [];
+
+    for(let i = 0; i < variationSeries.length; i++) {
+        cumulativeFrequency += variationSeries[i].frequency;
+        cumulativeArray.push({
+            value: variationSeries[i].value,
+            frequency: variationSeries[i].frequency,
+            frequencyPer100: variationSeries[i].frequency / 100,
+            cumulativeFrequency: cumulativeFrequency
+        });
+    }
+
+    return cumulativeArray;
+}
+
+let variationSeries = [];
+
+function addData() {
+    let valueInput = document.getElementById('valueInput');
+    let frequencyInput = document.getElementById('frequencyInput');
+
+    variationSeries.push({
+        value: parseInt(valueInput.value),
+        frequency: parseInt(frequencyInput.value)
+    });
+
+    valueInput.value = '';
+    frequencyInput.value = '';
+
+    updateTable();
+}
+
+function updateTable() {
+    let results = calculateCumulativeFrequency(variationSeries);
+    let table = document.getElementById('frequencyTable');
+
+    // Clear the table
+    while(table.rows.length > 1) {
+        table.deleteRow(1);
+    }
+
+    // Fill the table
+    for(let i = 0; i < results.length; i++) {
+        let row = table.insertRow(-1);
+        let cell1 = row.insertCell(0);
+        let cell2 = row.insertCell(1);
+        let cell3 = row.insertCell(2);
+        let cell4 = row.insertCell(3);
+
+        cell1.innerHTML = results[i].value;
+        cell2.innerHTML = results[i].frequency;
+        cell3.innerHTML = results[i].frequencyPer100;
+        cell4.innerHTML = results[i].cumulativeFrequency;
+    }
+}
+</script>
+
+</body>
+</html>
